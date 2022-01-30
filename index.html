@@ -1,73 +1,62 @@
 ---
-layout: default
+layout: page
 ---
 
 {% if site.posts.size == 0 %}
   <h2>No post found</h2>
 {% endif %}
 
-<ul class="archive">
-
-  {% for post in paginator.posts %}
-    {% unless post.next %}
-      {% assign today = site.time | date: '%Y-%m-%d' %}
-      {% capture month %}{{ post.date | date: '%Y-%m-%d' }}{% endcapture %}
-      {% if month != today %}
-        <h2>{{ month }}</h2>
-      {% endif %}
-    {% else %}
-      {% capture date %}{{ post.date | date: '%Y-%m-%d' }}{% endcapture %}
-      {% capture ndate %}{{ post.next.date | date: '%Y-%m-%d' }}{% endcapture %}
-      {% if date != ndate %}
-        <h2>{{ post.date | date: '%Y-%m-%d' }}</h2>
-      {% endif %}
-    {% endunless %}
+<div class="tags">
+  <ul class="label">
+    {% for tag in site.categories %}
     <li>
-      {% if post.link %}
-      <a href="{{ post.link }}">
-      {% else %}
-      <a href="{{ site.baseurl }}{{ post.url }}">
-      {% endif %}
-        {{ post.title }}
+      <a href="#{{ tag[0] }}">
+        <span>{{ tag[0] }}</span>
+        <span class="count">{{ tag[1] | size }}</span>
       </a>
-      <time>{{ post.date | date: "%Y-%m-%d" }}</time>
-
-      {% if post.categories %}
-      <a href="{{ site.url }}{{ site.baseurl }}/categories/#{{ post.categories.last }}" class="tag">
-        {{ post.categories.last }}
-      </a>
-      {% endif %}
-
     </li>
-  {% endfor %}
+    {% endfor %}
+  </ul>
 
-</ul>
+  <!-- Html Elements for Search -->
+  <div id="search-container">
+  <input type="text" id="search-input" placeholder="搜索帖子"
+    style="margin: 0px 0px 20px 0px; height: 40px; width: 100%;">
+  <ul id="results-container"></ul>
+  </div>
 
-<div class="pagination">
-  {% if paginator.previous_page %}
-    <span class="prev">
-      <a href="{{ site.baseurl }}{{ paginator.previous_page_path }}" class="prev">
-        上一页
-      </a>
-    </span>
-  {% endif %}
-  {% if paginator.next_page %}
-    <span class="next">
-      <a href="{{ site.baseurl}}{{ paginator.next_page_path }}" class="next">
-        下一页
-      </a>
-    </span>
-  {% endif %}
+  <!-- Script pointing to search-script.js -->
+  <script src="{{site.baseurl}}/assets/js/search-script.js" type="text/javascript"></script>
 
-  {% include fab.html %}
-
+  <!-- Configuration -->
   <script>
-  /* post pagination keyboard shortcuts */
-  document.body.onkeyup = function(e){
-    if (e.keyCode == '37') { window.location = '{{ site.baseurl }}{{ paginator.previous_page_path }}'; } // left arrow key
-    if (e.keyCode == '39') { window.location = '{{ site.baseurl}}{{ paginator.next_page_path }}'; } // right arrow key
-  };
-
+  SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '{{site.baseurl}}/search.json'
+  })
   </script>
 
+  {% for tag in site.categories %}
+    <h2 id="{{ tag[0] }}">
+      {{ tag[0] }}
+    </h2>
+    <ul class="tag">
+      {% for post in tag[1] %}
+        {% if post.title != null %}
+          <li>
+            <time>{{ post.date | date: "%Y-%m-%d" }}</time>
+            {% if post.link %}
+              <a href="{{ post.link }}">
+            {% else %}
+              <a href="{{ site.baseurl }}{{ post.url }}">
+            {% endif %}
+                {{ post.title }}
+              </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      <iframe src = "https://github.com/Terminus2021/teahall/issues/1" height="500" width="1200" frameborder="0"></iframe>
+    </ul>
+  {% endfor %}
 </div>
